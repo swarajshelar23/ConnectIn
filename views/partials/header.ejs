@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title || 'ConnectIn' %></title>
+  <link rel="stylesheet" href="/public/css/main.css" />
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1><a href="/"><span class="logo-symbol">🔗</span> ConnectIn</a></h1>
+      <% if (currentUser) { %>
+        <div class="header-search">
+          <form action="/search" method="get">
+            <input type="text" name="q" placeholder="Search..." class="search-input">
+            <button type="submit" class="search-btn">🔍</button>
+          </form>
+        </div>
+      <% } %>
+      <nav>
+        <a href="/">Home</a>
+        <% if (currentUser) { %>
+          <a href="/feed">Feed</a>
+          <a href="/search">Search</a>
+          <a href="/u/<%= currentUser.id %>">Profile</a>
+          <a href="/logout">Logout</a>
+        <% } else { %>
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+
+  <% if (flash && (flash.error || flash.success)) { %>
+    <section class="flash">
+      <% if (flash.error) { %>
+        <div class="flash-error">
+          <% flash.error.forEach(msg => { %>
+            <p><%= msg %></p>
+          <% }) %>
+        </div>
+      <% } %>
+      <% if (flash.success) { %>
+        <div class="flash-success">
+          <% flash.success.forEach(msg => { %>
+            <p><%= msg %></p>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+  <% } %>
+
+  <main>

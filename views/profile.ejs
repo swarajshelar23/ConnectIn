@@ -1,0 +1,276 @@
+<%- include('partials/header') %>
+
+<div class="profile-header">
+  <div class="profile-info">
+    <img class="profile-avatar" src="<%= profile.avatar || '/public/img/default-avatar.svg' %>" alt="<%= profile.name %>">
+    <div class="profile-details">
+      <h2><%= profile.name %></h2>
+      <% if (profile.headline) { %>
+        <p class="headline"><%= profile.headline %></p>
+      <% } %>
+      <% if (profile.company || profile.position) { %>
+        <p class="work-info">
+          <% if (profile.position && profile.company) { %>
+            <%= profile.position %> at <%= profile.company %>
+          <% } else if (profile.position) { %>
+            <%= profile.position %>
+          <% } else if (profile.company) { %>
+            Works at <%= profile.company %>
+          <% } %>
+        </p>
+      <% } %>
+      <% if (profile.location) { %>
+        <p class="location">📍 <%= profile.location %></p>
+      <% } %>
+      <% if (profile.bio) { %>
+        <p class="bio"><%= profile.bio %></p>
+      <% } %>
+      <% if (profile.website) { %>
+        <p class="website">
+          <a href="<%= profile.website %>" target="_blank" rel="noopener noreferrer">
+            🌐 Visit Website
+          </a>
+        </p>
+      <% } %>
+      <% if (profile.skills) { %>
+        <div class="skills-section">
+          <strong>Skills:</strong>
+          <div class="skills-list">
+            <% profile.skills.split(',').forEach(skill => { %>
+              <span class="skill-tag"><%= skill.trim() %></span>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+      <div class="follow-stats">
+        <span><strong><%= followerCount %></strong> followers</span>
+        <span><strong><%= followingCount %></strong> following</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="profile-actions">
+    <% if (currentUser && currentUser.id == profile.id) { %>
+      <button onclick="toggleEditForm()" class="btn-secondary">Edit Profile</button>
+    <% } else if (currentUser) { %>
+      <form action="/u/<%= profile.id %>/follow" method="post" style="display: inline;">
+        <button type="submit" class="btn-primary">
+          <%= isFollowing ? 'Unfollow' : 'Follow' %>
+        </button>
+      </form>
+    <% } %>
+  </div>
+</div>
+
+<% if (currentUser && currentUser.id == profile.id) { %>
+<form id="editForm" action="/u/<%= profile.id %>/edit" method="post" enctype="multipart/form-data" class="edit-form" style="display: none; text-decoration-color: aqua;">
+  <h3 class="edit-form-title">Edit Your Profile</h3>
+  
+  <div class="form-group">
+    <label for="avatar">Profile Picture:</label>
+    <div class="avatar-upload-container">
+      <div class="current-avatar">
+        <img id="avatarPreview" src="<%= profile.avatar || '/public/img/default-avatar.svg' %>" alt="Current avatar" class="avatar-preview">
+      </div>
+      <div class="avatar-upload-controls">
+        <input type="file" id="avatar" name="avatar" accept="image/*" class="file-input" onchange="previewAvatar(this)">
+        <small class="form-help">Choose a new profile picture (JPG, PNG, GIF, WebP - max 2MB)</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" name="name" placeholder="Your full name" value="<%= profile.name || '' %>" class="form-input" required>
+    </div>
+    <div class="form-group">
+      <label for="headline">Professional Headline:</label>
+      <input type="text" id="headline" name="headline" placeholder="e.g., Software Engineer at Tech Company" value="<%= profile.headline || '' %>" class="form-input">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="bio">About:</label>
+    <textarea id="bio" name="bio" placeholder="Tell us about yourself, your experience, and what you're passionate about..." rows="5" class="form-textarea"><%= profile.bio || '' %></textarea>
+    <small class="form-help">Share your professional story, skills, and interests</small>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="location">Location:</label>
+      <input type="text" id="location" name="location" placeholder="City, Country" value="<%= profile.location || '' %>" class="form-input">
+    </div>
+    <div class="form-group">
+      <label for="website">Website:</label>
+      <input type="url" id="website" name="website" placeholder="https://yourwebsite.com" value="<%= profile.website || '' %>" class="form-input">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="company">Current Company:</label>
+      <input type="text" id="company" name="company" placeholder="Company name" value="<%= profile.company || '' %>" class="form-input">
+    </div>
+    <div class="form-group">
+      <label for="position">Position:</label>
+      <input type="text" id="position" name="position" placeholder="Job title" value="<%= profile.position || '' %>" class="form-input">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="skills">Skills:</label>
+    <input type="text" id="skills" name="skills" placeholder="JavaScript, Python, React, etc. (comma separated)" value="<%= profile.skills || '' %>" class="form-input">
+    <small class="form-help">Separate skills with commas</small>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn-primary">
+      <span class="btn-icon">💾</span>
+      Save Changes
+    </button>
+    <button type="button" onclick="toggleEditForm()" class="btn-secondary">
+      <span class="btn-icon">❌</span>
+      Cancel
+    </button>
+  </div>
+</form>
+<% } %>
+
+<h3>Posts (<%= posts.length %>)</h3>
+<section class="posts">
+  <% posts.forEach(post => { %>
+  <article class="post">
+    <header class="post-header">
+      <img class="avatar" src="<%= profile.avatar || '/public/img/default-avatar.svg' %>" alt="avatar">
+      <div class="post-author">
+        <strong><%= profile.name %></strong>
+        <div class="muted"><%= profile.headline || 'No headline' %></div>
+      </div>
+      <time class="muted"><%= new Date(post.created_at).toLocaleString() %></time>
+    </header>
+    <div class="post-content">
+      <p><%= post.content %></p>
+      <% if (post.image) { %>
+        <img class="post-image" src="<%= post.image %>" alt="post image">
+      <% } %>
+    </div>
+    <div class="post-actions">
+      <% if (currentUser) { %>
+        <form action="/posts/<%= post.id %>/like" method="post" style="display: inline;">
+          <button type="submit" class="action-btn <%= post.user_liked ? 'liked' : '' %>">
+            ❤️ <%= post.like_count %>
+          </button>
+        </form>
+      <% } else { %>
+        <span class="action-btn">❤️ <%= post.like_count %></span>
+      <% } %>
+      <button class="action-btn comment-toggle" data-post-id="<%= post.id %>" onclick="toggleComments(this)">
+        💬 <%= post.comment_count %>
+      </button>
+    </div>
+    <div id="comments-<%= post.id %>" class="comments-section" style="display: none;">
+      <% if (currentUser) { %>
+      <form action="/posts/<%= post.id %>/comment" method="post" class="comment-form">
+        <input type="text" name="content" placeholder="Add a comment..." required>
+        <button type="submit">Comment</button>
+      </form>
+      <% } %>
+      <div class="comments-list">
+        <!-- Comments will be loaded here -->
+      </div>
+    </div>
+  </article>
+  <% }) %>
+</section>
+
+<script>
+function toggleEditForm() {
+  const form = document.getElementById('editForm');
+  const isVisible = form.style.display === 'block';
+  
+  if (isVisible) {
+    form.style.display = 'none';
+    // Reset form if cancelled
+    form.reset();
+    // Reset avatar preview
+    const avatarPreview = document.getElementById('avatarPreview');
+    const originalSrc = '<%= profile.avatar || "/public/img/default-avatar.svg" %>';
+    avatarPreview.src = originalSrc;
+  } else {
+    form.style.display = 'block';
+    // Scroll to form
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function previewAvatar(input) {
+  const file = input.files[0];
+  const preview = document.getElementById('avatarPreview');
+  
+  if (file) {
+    // Check file size (2MB limit)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('File size must be less than 2MB');
+      input.value = '';
+      return;
+    }
+    
+    // Check file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please select a valid image file (JPG, PNG, GIF, WebP)');
+      input.value = '';
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      preview.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function toggleComments(button) {
+  const postId = button.getAttribute('data-post-id');
+  const commentsSection = document.getElementById('comments-' + postId);
+  if (commentsSection.style.display === 'none') {
+    commentsSection.style.display = 'block';
+    button.classList.add('active');
+  } else {
+    commentsSection.style.display = 'none';
+    button.classList.remove('active');
+  }
+}
+
+// Form validation
+document.addEventListener('DOMContentLoaded', function() {
+  const editForm = document.getElementById('editForm');
+  if (editForm) {
+    editForm.addEventListener('submit', function(e) {
+      const name = document.getElementById('name').value.trim();
+      if (!name) {
+        e.preventDefault();
+        alert('Please enter your full name');
+        document.getElementById('name').focus();
+        return false;
+      }
+      
+      // Show loading state
+      const submitBtn = editForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
+      submitBtn.disabled = true;
+      
+      // Re-enable button after a delay (in case of errors)
+      setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }, 5000);
+    });
+  }
+});
+</script>
+
+<%- include('partials/footer') %>

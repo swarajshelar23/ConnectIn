@@ -1,0 +1,136 @@
+<%- include('partials/header') %>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-content">
+    <h1><span class="hero-symbol">🔗</span> Welcome to ConnectIn</h1>
+    <p class="hero-subtitle">Connect, Share, and Grow Your Professional Network</p>
+    <p class="hero-description">A modern social platform for professionals to share insights, connect with peers, and build meaningful relationships in their industry.</p>
+    <div class="hero-actions">
+      <% if (!currentUser) { %>
+        <a href="/register" class="btn btn-primary">Get Started</a>
+        <a href="/login" class="btn btn-secondary">Sign In</a>
+      <% } else { %>
+        <a href="/feed" class="btn btn-primary">View Feed</a>
+        <a href="/u/<%= currentUser.id %>" class="btn btn-secondary">My Profile</a>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+  <div class="container">
+    <h2>Platform Features</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>Share Updates</h3>
+        <p>Post professional updates, insights, and achievements to your network.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Connect & Network</h3>
+        <p>Build meaningful connections with professionals in your industry.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Discover Content</h3>
+        <p>Find relevant posts and professionals through our search functionality.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Professional Profiles</h3>
+        <p>Create detailed profiles showcasing your skills and experience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Demo Content Section -->
+<section class="demo-content">
+  <div class="container">
+    <h2>Recent Activity</h2>
+    <div class="demo-posts">
+      <div class="demo-post">
+        <div class="post-header">
+          <div class="post-avatar">👨‍💼</div>
+          <div class="post-info">
+            <h4>John Smith</h4>
+            <p class="post-title">Senior Developer at TechCorp</p>
+            <span class="post-time">2 hours ago</span>
+          </div>
+        </div>
+        <div class="post-content">
+          <p>Just completed a major project using React and Node.js! The team collaboration was incredible, and we delivered ahead of schedule. Excited to share what we learned about scalable architecture patterns.</p>
+          <div class="post-stats">
+            <span>👍 24 likes</span>
+            <span>💬 8 comments</span>
+            <span>🔄 3 shares</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-post">
+        <div class="post-header">
+          <div class="post-avatar">👩‍💻</div>
+          <div class="post-info">
+            <h4>Sarah Johnson</h4>
+            <p class="post-title">UX Designer at DesignStudio</p>
+            <span class="post-time">5 hours ago</span>
+          </div>
+        </div>
+        <div class="post-content">
+          <p>Attending the UX Conference 2024 was incredibly inspiring! Key takeaway: User empathy should drive every design decision. Looking forward to implementing these insights in our upcoming projects.</p>
+          <div class="post-stats">
+            <span>👍 18 likes</span>
+            <span>💬 5 comments</span>
+            <span>🔄 2 shares</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-post">
+        <div class="post-header">
+          <div class="post-avatar">👨‍🎓</div>
+          <div class="post-info">
+            <h4>Mike Chen</h4>
+            <p class="post-title">Data Scientist at Analytics Pro</p>
+            <span class="post-time">1 day ago</span>
+          </div>
+        </div>
+        <div class="post-content">
+          <p>Machine learning model deployment can be tricky, but with the right CI/CD pipeline, it becomes much more manageable. Here's what I learned from our latest ML ops implementation...</p>
+          <div class="post-stats">
+            <span>👍 31 likes</span>
+            <span>💬 12 comments</span>
+            <span>🔄 7 shares</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="cta">
+  <div class="container">
+    <div class="cta-content">
+      <h2>Ready to Join Our Community?</h2>
+      <p>Connect with professionals, share your expertise, and grow your network today.</p>
+      <% if (!currentUser) { %>
+        <div class="cta-actions">
+          <a href="/register" class="btn btn-primary btn-large">Create Account</a>
+          <p class="cta-note">Already have an account? <a href="/login">Sign in here</a></p>
+        </div>
+      <% } else { %>
+        <div class="cta-actions">
+          <a href="/feed" class="btn btn-primary btn-large">Explore Feed</a>
+          <a href="/search" class="btn btn-secondary btn-large">Find Connections</a>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

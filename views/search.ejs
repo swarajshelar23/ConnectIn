@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+
+<div class="search-container">
+  <h2>Search Results</h2>
+  
+  <form action="/search" method="get" class="search-form">
+    <input type="text" name="q" placeholder="Search users and posts..." value="<%= query %>" required>
+    <button type="submit">Search</button>
+  </form>
+
+  <% if (query) { %>
+    <div class="search-results">
+      <% if (users.length > 0) { %>
+        <section class="users-section">
+          <h3>People (<%= users.length %>)</h3>
+          <div class="users-grid">
+            <% users.forEach(user => { %>
+              <div class="user-card">
+                <img class="avatar" src="<%= user.avatar || '/public/img/default-avatar.png' %>" alt="<%= user.name %>">
+                <div class="user-info">
+                  <a href="/u/<%= user.id %>"><strong><%= user.name %></strong></a>
+                  <p class="muted"><%= user.headline || 'No headline' %></p>
+                  <p class="muted"><%= user.follower_count %> followers</p>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </section>
+      <% } %>
+
+      <% if (posts.length > 0) { %>
+        <section class="posts-section">
+          <h3>Posts (<%= posts.length %>)</h3>
+          <div class="posts">
+            <% posts.forEach(post => { %>
+              <article class="post">
+                <header class="post-header">
+                  <img class="avatar" src="<%= post.avatar || '/public/img/default-avatar.png' %>" alt="avatar">
+                  <div class="post-author">
+                    <a href="/u/<%= post.user_id %>"><strong><%= post.name %></strong></a>
+                    <div class="muted"><%= post.headline %></div>
+                  </div>
+                  <time class="muted"><%= new Date(post.created_at).toLocaleString() %></time>
+                </header>
+                <div class="post-content">
+                  <p><%= post.content %></p>
+                  <% if (post.image) { %>
+                    <img class="post-image" src="<%= post.image %>" alt="post image">
+                  <% } %>
+                </div>
+                <div class="post-meta">
+                  <div class="post-stats">
+                    <span>❤️ <%= post.like_count %></span>
+                    <span>💬 <%= post.comment_count %></span>
+                  </div>
+                </div>
+              </article>
+            <% }) %>
+          </div>
+        </section>
+      <% } %>
+
+      <% if (users.length === 0 && posts.length === 0) { %>
+        <div class="no-results">
+          <p>No results found for "<%= query %>"</p>
+          <p class="muted">Try different keywords or check your spelling.</p>
+        </div>
+      <% } %>
+    </div>
+  <% } else { %>
+    <div class="search-placeholder">
+      <p class="muted">Enter a search term to find people and posts.</p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>
